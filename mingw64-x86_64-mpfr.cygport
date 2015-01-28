@@ -2,7 +2,7 @@ CROSS_HOST="x86_64-w64-mingw32"
 inherit cross
 
 NAME="mingw64-x86_64-mpfr"
-VERSION=3.1.2
+VERSION=3.1.2-p8
 RELEASE=1
 CATEGORY="Devel"
 SUMMARY="Multiple-precision floating point computation library for Win64 toolchain"
@@ -11,7 +11,14 @@ precision floating-point computation which is both efficient and has a
 well-defined semantics. It copies the good ideas from the ANSI/IEEE-754
 standard for double-precision floating-point arithmetic (53-bit significand)."
 HOMEPAGE="http://www.mpfr.org/"
-SRC_URI="http://www.mpfr.org/mpfr-current/mpfr-${VERSION}.tar.xz"
-SRC_DIR="mpfr-${VERSION}"
+SRC_URI="http://www.mpfr.org/mpfr-current/mpfr-${VERSION%-p*}.tar.xz"
+SRC_DIR="mpfr-${VERSION%-p*}"
+
+for n in $(seq -f "%02.0f" ${VERSION##*-p})
+do
+	PATCH_URI+=" http://www.mpfr.org/mpfr-current/patch${n}#/mpfr-${VERSION%-p*}-p${n##0}.patch"
+done
 
 MAKEOPTS+=" INFO_DEPS= nobase_dist_doc_DATA= "
+
+DIFF_EXCLUDES="get_patches.c"
